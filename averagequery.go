@@ -10,7 +10,6 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 )
 
 // An Average Query allows you to calculate the average of the desired column.
@@ -33,9 +32,8 @@ func (o *AverageQuery) getSQL() string {
 }
 
 // Return the expected result for the query
-func (o *AverageQuery) getExpectedResult() int {
-	i, _ := strconv.Atoi(o.ExceptedResult.Content)
-	return i
+func (o *AverageQuery) getExpectedResult() string {
+	return o.ExceptedResult.Content
 }
 
 // Shows the query content once loaded from the config file

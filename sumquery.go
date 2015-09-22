@@ -10,7 +10,6 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 )
 
 // A Sum Query allows you to calculate the sum of the desired column.
@@ -33,9 +32,9 @@ func (o *SumQuery) getSQL() string {
 }
 
 // Return the expected result for the query
-func (o *SumQuery) getExpectedResult() int {
-	i, _ := strconv.Atoi(o.ExceptedResult.Content)
-	return i
+func (o *SumQuery) getExpectedResult() string {
+	return o.ExceptedResult.Content
+
 }
 
 // Shows the query content once loaded from the config file

@@ -37,19 +37,19 @@ type ExceptedResult struct {
 // This error is used if an executable query fails.
 type QueryError struct {
 	prob           string
-	expectedValue  int
-	executionvalue int
+	expectedValue  string
+	executionvalue string
 }
 
 type ExecutableQyery interface {
 	getSQL() string
-	getExpectedResult() int
+	getExpectedResult() string
 }
 
 func processQuery(q ExecutableQyery, dbC *sql.DB) (error, *QueryError) {
 	if st, err := dbC.Prepare(q.getSQL()); err == nil {
 		if rows, err := st.Query(); err == nil {
-			var n int
+			var n string
 			for rows.Next() {
 				_ = rows.Scan(&n)
 			}

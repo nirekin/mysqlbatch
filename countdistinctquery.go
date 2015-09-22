@@ -10,7 +10,6 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 )
 
 // A Count Distinct Query allows you to count distinct occurences of a
@@ -34,9 +33,8 @@ func (o *CountDistinctQuery) getSQL() string {
 }
 
 // Return the expected result for the query
-func (o *CountDistinctQuery) getExpectedResult() int {
-	i, _ := strconv.Atoi(o.ExceptedResult.Content)
-	return i
+func (o *CountDistinctQuery) getExpectedResult() string {
+	return o.ExceptedResult.Content
 }
 
 // Shows the query content once loaded from the config file

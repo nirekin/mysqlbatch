@@ -10,7 +10,6 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 )
 
 // A Count Query allows you to count rows matching the given where condition.
@@ -31,9 +30,8 @@ func (o *CountQuery) getSQL() string {
 }
 
 // Return the expected result for the query
-func (o *CountQuery) getExpectedResult() int {
-	i, _ := strconv.Atoi(o.ExceptedResult.Content)
-	return i
+func (o *CountQuery) getExpectedResult() string {
+	return o.ExceptedResult.Content
 }
 
 // Shows the query content once loaded from the config file
