@@ -28,6 +28,8 @@ const (
 	SELECT_COUNT_DISTINCT = "SELECT COUNT DISTINCT(%v) FROM %v %v"
 	SUM                   = "SELECT SUM(%v) FROM %v %v"
 	AVG                   = "SELECT AVG(%v) FROM %v %v"
+	MAX                   = "SELECT MAX(%v) FROM %v %v"
+	MIN                   = "SELECT MIN(%v) FROM %v %v"
 )
 
 // Executes the batch received as parameter against a given database

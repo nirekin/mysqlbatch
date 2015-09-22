@@ -36,6 +36,8 @@ type QueryWrapper struct {
 	CountDistinctQuery *CountDistinctQuery `xml:"count_distinct_query"`
 	SumQuery           *SumQuery           `xml:"sum_query"`
 	AverageQuery       *AverageQuery       `xml:"average_query"`
+	MinQuery           *MinQuery           `xml:"min_query"`
+	MaxQuery           *MaxQuery           `xml:"max_query"`
 }
 
 // Execute the step associated to the success of the execution
@@ -126,6 +128,12 @@ func launchQuery(w *QueryWrapper, dbC *sql.DB, q *QueryResult) {
 	} else if w.AverageQuery != nil {
 		e, queryError := processQuery(w.AverageQuery, dbC)
 		processPassFAil(w, dbC, q, e, queryError)
+	} else if w.MinQuery != nil {
+		e, queryError := processQuery(w.MinQuery, dbC)
+		processPassFAil(w, dbC, q, e, queryError)
+	} else if w.MaxQuery != nil {
+		e, queryError := processQuery(w.MaxQuery, dbC)
+		processPassFAil(w, dbC, q, e, queryError)
 	}
 }
 
@@ -165,6 +173,10 @@ func (w *QueryWrapper) showLoadedQuery() {
 		w.SumQuery.showLoadedQuery()
 	} else if w.AverageQuery != nil {
 		w.AverageQuery.showLoadedQuery()
+	} else if w.MinQuery != nil {
+		w.MinQuery.showLoadedQuery()
+	} else if w.MaxQuery != nil {
+		w.MaxQuery.showLoadedQuery()
 	}
 
 	if w.OnPass != nil {
