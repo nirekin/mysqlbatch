@@ -37,7 +37,7 @@ const emailTemplateHtmlBody = `
 	{{range .URLResultList}}
 		<tr>
 			<td>Base de datos:</td>
-			<td>{{.URL}}</td>
+			<td>{{.GetUrlForMail}}</td>
 		</tr>
 		{{range .QueryResultList}}
 			{{range .GetInnerResultStack }}  

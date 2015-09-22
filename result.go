@@ -142,3 +142,13 @@ func (r *GlobalResults) sendMail() {
 		br.Smtp.sendEnailHtml(br, buffer.String())
 	}
 }
+
+// Return the URL without the user and password
+func (u *UrlResult) GetUrlForMail() string {
+	idx := strings.Index(u.URL, "@")
+	if idx > -1 {
+		return "..." + u.URL[idx:len(u.URL)]
+	} else {
+		return u.URL
+	}
+}
