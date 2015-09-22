@@ -1,0 +1,54 @@
+<!ELEMENT mysql EMPTY>
+<!ATTLIST mysql url CDATA #REQUIRED>
+
+<!ELEMENT author EMPTY>
+<!ATTLIST author name CDATA #REQUIRED>
+<!ATTLIST author organization CDATA #IMPLIED>
+<!ATTLIST author phone CDATA #IMPLIED>
+<!ATTLIST author email CDATA #IMPLIED>
+
+<!ELEMENT recipient EMPTY >
+<!ATTLIST recipient address CDATA #REQUIRED>
+
+<!ELEMENT recipients (recipient+) >
+
+<!ELEMENT smtp_config EMPTY >
+<!ATTLIST smtp_config server CDATA #REQUIRED>
+<!ATTLIST smtp_config port CDATA #REQUIRED>
+<!ATTLIST smtp_config user CDATA #REQUIRED>
+<!ATTLIST smtp_config password CDATA #REQUIRED>
+<!ATTLIST smtp_config sender CDATA #IMPLIED>
+
+<!ELEMENT mysqls (mysql+) >
+
+<!ELEMENT field (#PCDATA)>
+<!ELEMENT from (#PCDATA)>
+<!ELEMENT where (#PCDATA)>
+
+<!ELEMENT description (#PCDATA)>
+
+<!ELEMENT message (#PCDATA)>
+<!ELEMENT fail (message?, query?)>
+<!ATTLIST fail name CDATA #IMPLIED>
+
+<!ELEMENT pass (message?, query?)>
+<!ATTLIST pass name CDATA #IMPLIED>
+
+<!ELEMENT expected_result (#PCDATA)>
+
+<!ELEMENT min_query  (field, from, where, expected_result) >
+<!ELEMENT max_query  (field, from, where, expected_result) >
+<!ELEMENT average_query  (field, from, where, expected_result) >
+<!ELEMENT sum_query  (field, from, where, expected_result) >
+<!ELEMENT count_distinct_query  (field, from, where, expected_result) >
+<!ELEMENT count_query (from, where, expected_result)>
+
+<!ELEMENT query ((count_query|count_distinct_query|sum_query|average_query|min_query|max_Query), description?, pass?, fail?) >
+<!ATTLIST query name CDATA #REQUIRED>
+
+
+<!ELEMENT queries (query+) >
+<!ELEMENT batch (smtp_config, recipients+, mysqls, queries) >
+<!ATTLIST batch name CDATA #REQUIRED>
+
+<!ELEMENT batches (author?,batch+ ) >
