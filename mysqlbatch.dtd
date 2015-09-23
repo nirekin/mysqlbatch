@@ -35,6 +35,7 @@
 <!ATTLIST pass name CDATA #IMPLIED>
 
 <!ELEMENT expected_result (#PCDATA)>
+<!ATTLIST expected_result operator (eq|lt|gt|le|ge) "eq">
 
 <!ELEMENT min_query  (field, from, where, expected_result) >
 <!ELEMENT max_query  (field, from, where, expected_result) >
@@ -43,7 +44,7 @@
 <!ELEMENT count_distinct_query  (field, from, where, expected_result) >
 <!ELEMENT count_query (from, where, expected_result)>
 
-<!ELEMENT query ((count_query|count_distinct_query|sum_query|average_query|min_query|max_Query), description?, pass?, fail?) >
+<!ELEMENT query ((count_query|count_distinct_query|sum_query|average_query|min_query|max_query), description?, pass?, fail?) >
 <!ATTLIST query name CDATA #REQUIRED>
 
 

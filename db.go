@@ -25,6 +25,7 @@ type DB struct {
 // Executes the batch received as parameter against a given database
 // and send the populate the result to the channel
 func runUrlOnce(ch chan UrlResult, d *DB, batch *Batch) {
+	TraceActivity.Printf("runs :%s on %s\n", batch.Name, d.URL)
 	r := UrlResult{}
 	r.URL = d.URL
 
@@ -37,6 +38,7 @@ func runUrlOnce(ch chan UrlResult, d *DB, batch *Batch) {
 	ch <- r
 }
 
+// Shows the url to reach the database once loaded from the config file
 func (c *DBList) showLoadedContent() {
 	for _, url := range c.DBList {
 		TraceLoaded.Printf("url: %s\n", url.URL)

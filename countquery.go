@@ -32,10 +32,20 @@ func (o *CountQuery) getExpectedResult() string {
 	return o.ExceptedResult.Content
 }
 
+// Return the operator to apply on expected result of the query
+func (o *CountQuery) getOperator() string {
+	if o.ExceptedResult.Operator == "" {
+		return OPERATOR_EQ
+	} else {
+		return o.ExceptedResult.Operator
+	}
+}
+
 // Shows the query content once loaded from the config file
 func (query *CountQuery) showLoadedQuery() {
 	TraceLoaded.Printf("count query: \n")
 	TraceLoaded.Printf("query from: %s\n", query.From)
 	TraceLoaded.Printf("query where: %s\n", query.Where)
 	TraceLoaded.Printf("query expected result: %s\n", query.ExceptedResult)
+	TraceLoaded.Printf("query expected result operator: %s\n", query.ExceptedResult.Operator)
 }

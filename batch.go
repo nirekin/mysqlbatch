@@ -104,7 +104,7 @@ func (c *Batches) runBatchOnce() {
 	}
 }
 
-// Show the batches content once loaded from the config file
+// Shows the batches content once loaded from the config file
 func (c *Batches) showLoadedContent() {
 	TraceLoaded.Printf("----------------------------------------------------------------------------- \n")
 	TraceLoaded.Printf("loaded batches: \n")

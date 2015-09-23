@@ -13,6 +13,8 @@ import (
 	"fmt"
 )
 
+type CompareFunc func(expected string, execution string) bool
+
 // SQL Sentences used by the executable queries
 const (
 	SELECT_COUNT_ALL      = "SELECT COUNT(*) FROM %v %v"
@@ -21,7 +23,38 @@ const (
 	AVG                   = "SELECT AVG(%v) FROM %v %v"
 	MAX                   = "SELECT MAX(%v) FROM %v %v"
 	MIN                   = "SELECT MIN(%v) FROM %v %v"
+
+	OPERATOR_EQ = "eq"
+	OPERATOR_LT = "lt"
+	OPERATOR_GT = "gt"
+	OPERATOR_LE = "le"
+	OPERATOR_GE = "ge"
 )
+
+// Map containing all the functions available to compare
+// the expected result with the value returned by the query
+var compareFuncs = map[string]CompareFunc{
+	"eq": func(expected string, execution string) bool {
+		TraceActivity.Printf("testing  : %s == %s\n", expected, execution)
+		return expected == execution
+	},
+	"gt": func(expected string, execution string) bool {
+		TraceActivity.Printf("testing  : %s > %s\n", expected, execution)
+		return expected > execution
+	},
+	"lt": func(expected string, execution string) bool {
+		TraceActivity.Printf("testing  : %s < %s\n", expected, execution)
+		return expected < execution
+	},
+	"ge": func(expected string, execution string) bool {
+		TraceActivity.Println("testing  : %s >= %s\n", expected, execution)
+		return expected >= execution
+	},
+	"le": func(expected string, execution string) bool {
+		TraceActivity.Println("testing  : %s <= %s\n", expected, execution)
+		return expected <= execution
+	},
+}
 
 // Database field used in executable queries
 type Field struct {
@@ -38,9 +71,12 @@ type Where struct {
 	Content string `xml:",chardata"`
 }
 
-// Result expected by the executable queries
+// Result expected by the executable queries, and if specified
+// the operator to use to compare this result with the value returned
+// by the execution of the query
 type ExceptedResult struct {
-	Content string `xml:",chardata"`
+	Content  string `xml:",chardata"`
+	Operator string `xml:"operator,attr"`
 }
 
 // To create a query you need to specify, the "from" database table, the
@@ -59,9 +95,11 @@ type QueryError struct {
 	ExecutionValue string
 }
 
+// Common definition of all executable queries
 type ExecutableQyery interface {
 	getSQL() string
 	getExpectedResult() string
+	getOperator() string
 }
 
 // Shows the content of the error
@@ -71,9 +109,10 @@ func (r *QueryError) showContent() {
 	TraceResult.Printf("query error executionValue %s:\n", r.ExecutionValue)
 }
 
+// Lauches the query againts the given database
 func processQuery(q ExecutableQyery, dbC *sql.DB) (error, *QueryError) {
 	s := q.getSQL()
-	TraceActivity.Println("execute query : %s", s)
+	TraceActivity.Printf("execute query :%s\n", s)
 	if st, err := dbC.Prepare(s); err == nil {
 		if rows, err := st.Query(); err == nil {
 			var n string
@@ -81,7 +120,9 @@ func processQuery(q ExecutableQyery, dbC *sql.DB) (error, *QueryError) {
 				_ = rows.Scan(&n)
 			}
 			e := q.getExpectedResult()
-			if n == e {
+			operator := q.getOperator()
+			TraceActivity.Printf("operator : %s\n", operator)
+			if compareFuncs[operator](e, n) {
 				return nil, nil
 			} else {
 				s := fmt.Sprintf("error expected %d got %d", e, n)

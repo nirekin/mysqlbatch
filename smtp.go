@@ -36,8 +36,10 @@ func (s *SmtpConfig) getSender() string {
 // Sends the content passed as parameter to the recipient list
 // of the given batch result
 func (s *SmtpConfig) sendEmailHtml(r *BatchResult, content string) {
+
 	mime := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
 	subject := fmt.Sprintf("Subject: MysqlBatch Results for the batch \"%s\"\n", r.BatchName)
+	TraceActivity.Printf("sending the email : %s \n", subject)
 
 	dest := make([]string, 0)
 	for _, d := range r.Recipients.RecipientList {
@@ -58,7 +60,7 @@ func (s *SmtpConfig) sendEmailHtml(r *BatchResult, content string) {
 		[]byte(subject+mime+content),
 	)
 	if err != nil {
-		TraceActivity.Printf("Error running a query  : %s \n", err.Error())
+		TraceActivity.Printf("error sending the email : %s \n", err.Error())
 		log.Fatal(err)
 	}
 }
