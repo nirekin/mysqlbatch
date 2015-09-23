@@ -35,7 +35,7 @@ func (s *SmtpConfig) getSender() string {
 
 // Sends the content passed as parameter to the recipient list
 // of the given batch result
-func (s *SmtpConfig) sendEnailHtml(r *BatchResult, content string) {
+func (s *SmtpConfig) sendEmailHtml(r *BatchResult, content string) {
 	mime := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
 	subject := fmt.Sprintf("Subject: MysqlBatch Results for the batch \"%s\"\n", r.BatchName)
 

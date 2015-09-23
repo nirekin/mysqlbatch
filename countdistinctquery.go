@@ -21,10 +21,8 @@ import (
 // database table, the complete "where" condition ( including "where" !)
 // and the expected result.
 type CountDistinctQuery struct {
-	Field          Field          `xml:"from"`
-	From           From           `xml:"from"`
-	Where          Where          `xml:"where"`
-	ExceptedResult ExceptedResult `xml:"expected_result"`
+	Field Field `xml:"field"`
+	BaseQuery
 }
 
 // Returns the SQL correspinding to the query

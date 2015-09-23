@@ -41,6 +41,7 @@ type QueryResult struct {
 	Description      string
 	Message          string
 	Status           string
+	QueryError       *QueryError
 	InnerQueryResult *QueryResult
 	InnerLevel       int
 }
@@ -83,6 +84,9 @@ func (r *QueryResult) showContent() {
 	if r.InnerQueryResult != nil {
 		r.InnerQueryResult.showContent()
 	}
+	if r.QueryError != nil {
+		r.QueryError.showContent()
+	}
 }
 
 // Indicates if the query result has a description
@@ -90,14 +94,33 @@ func (r *QueryResult) HasDescription() bool {
 	return r.Description != ""
 }
 
+// Indicates if the query result has an error
+func (r *QueryResult) HasError() bool {
+	return r.QueryError != nil
+}
+
 // Indicates if the query result has a message
 func (r *QueryResult) HasMessage() bool {
 	return r.Message != ""
 }
 
+// Indicates if the query has passed or not (failed)
+func (r *QueryResult) HasFailed() bool {
+	return r.Status != "PASSED"
+}
+
 // Returns the trimed description
 func (r *QueryResult) GetTrimedDescription() string {
 	return strings.TrimSpace(r.Description)
+}
+
+// Returns the spacing corresponding to the inner level of the quey
+func (r *QueryResult) GetSpacing() template.HTML {
+	var spacing bytes.Buffer
+	for i := 1; i < r.InnerLevel; i++ {
+		spacing.WriteString("&nbsp;&nbsp;&nbsp;")
+	}
+	return template.HTML(spacing.String())
 }
 
 // Adds the inner result to the slice received as parameter
@@ -120,8 +143,13 @@ func (r *QueryResult) GetInnerResultStack() []*QueryResult {
 
 // Sends email based on the result of all batches
 func (r *GlobalResults) sendMail() {
+
+	funcMap := template.FuncMap{
+		"odd": func(i int) bool { return i%2 == 0 },
+	}
+
 	tHeader := template.Must(template.New("header").Parse(emailTemplateHtmlHeader))
-	tBody := template.Must(template.New("body").Parse(emailTemplateHtmlBody))
+	tBody := template.Must(template.New("body").Funcs(funcMap).Parse(emailTemplateHtmlBody))
 
 	var docHeader bytes.Buffer
 	tHeader.Execute(&docHeader, r.Author)
@@ -139,7 +167,7 @@ func (r *GlobalResults) sendMail() {
 		var buffer bytes.Buffer
 		buffer.WriteString(docHeader.String())
 		buffer.WriteString(docBody.String())
-		br.Smtp.sendEnailHtml(br, buffer.String())
+		br.Smtp.sendEmailHtml(br, buffer.String())
 	}
 }
 

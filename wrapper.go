@@ -43,13 +43,11 @@ type QueryWrapper struct {
 // Execute the step associated to the success of the execution
 // of the executable query
 func (w *QueryWrapper) onPass(dbC *sql.DB, result *QueryResult) {
+	result.Status = "PASSED"
 	if w.OnPass != nil {
 		if w.OnPass.Message.Content != "" {
 			s := strings.TrimSpace(w.OnPass.Message.Content)
 			result.Message = s
-			result.Status = "PASSED"
-		} else {
-			result.Status = "--PASSED"
 		}
 
 		if w.OnPass.Query != nil {
@@ -64,13 +62,11 @@ func (w *QueryWrapper) onPass(dbC *sql.DB, result *QueryResult) {
 /// Execute the step associated to the failure of the execution
 // of the executable query
 func (w *QueryWrapper) onFail(dbC *sql.DB, result *QueryResult) {
+	result.Status = "FAILED"
 	if w.OnFail != nil {
 		if w.OnFail.Message.Content != "" {
 			s := strings.TrimSpace(w.OnFail.Message.Content)
 			result.Message = s
-			result.Status = "FAILED"
-		} else {
-			result.Status = "--FAILED"
 		}
 
 		if w.OnFail.Query != nil {
@@ -92,7 +88,7 @@ func (w *QueryWrapper) runOnce(dbC *sql.DB, result *UrlResult) {
 	if w.Description != nil {
 		qr.Description = w.Description.Content
 	} else {
-		qr.Description = "no desc"
+		qr.Description = ""
 	}
 	q := &qr
 	result.QueryResultList = append(result.QueryResultList, q)
@@ -118,22 +114,22 @@ func (w *QueryWrapper) runInnerOnce(dbC *sql.DB, result *QueryResult) {
 func launchQuery(w *QueryWrapper, dbC *sql.DB, q *QueryResult) {
 	if w.CountQuery != nil {
 		e, queryError := processQuery(w.CountQuery, dbC)
-		processPassFAil(w, dbC, q, e, queryError)
+		processPassFail(w, dbC, q, e, queryError)
 	} else if w.CountDistinctQuery != nil {
 		e, queryError := processQuery(w.CountDistinctQuery, dbC)
-		processPassFAil(w, dbC, q, e, queryError)
+		processPassFail(w, dbC, q, e, queryError)
 	} else if w.SumQuery != nil {
 		e, queryError := processQuery(w.SumQuery, dbC)
-		processPassFAil(w, dbC, q, e, queryError)
+		processPassFail(w, dbC, q, e, queryError)
 	} else if w.AverageQuery != nil {
 		e, queryError := processQuery(w.AverageQuery, dbC)
-		processPassFAil(w, dbC, q, e, queryError)
+		processPassFail(w, dbC, q, e, queryError)
 	} else if w.MinQuery != nil {
 		e, queryError := processQuery(w.MinQuery, dbC)
-		processPassFAil(w, dbC, q, e, queryError)
+		processPassFail(w, dbC, q, e, queryError)
 	} else if w.MaxQuery != nil {
 		e, queryError := processQuery(w.MaxQuery, dbC)
-		processPassFAil(w, dbC, q, e, queryError)
+		processPassFail(w, dbC, q, e, queryError)
 	}
 }
 
@@ -141,7 +137,7 @@ func launchQuery(w *QueryWrapper, dbC *sql.DB, q *QueryResult) {
 // This will populate the result received as parameter and if
 // required it will also lauch the inner request corresponding
 // to the status of the execution
-func processPassFAil(w *QueryWrapper, dbC *sql.DB, q *QueryResult, e error, qe *QueryError) {
+func processPassFail(w *QueryWrapper, dbC *sql.DB, q *QueryResult, e error, qe *QueryError) {
 	if e != nil {
 		TraceActivity.Printf("Error running a query  : %s \n", e.Error())
 		log.Fatal(e)
@@ -149,6 +145,7 @@ func processPassFAil(w *QueryWrapper, dbC *sql.DB, q *QueryResult, e error, qe *
 		if qe == nil {
 			w.onPass(dbC, q)
 		} else {
+			q.QueryError = qe
 			w.onFail(dbC, q)
 		}
 	}

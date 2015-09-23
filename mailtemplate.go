@@ -9,8 +9,8 @@
 package main
 
 const emailTemplateHtmlHeader = `
-<table>
 {{if .}}
+<table bgcolor="#E6E6E6" border="0">
 	<tr>
 		<td width="30%">Author:</td>
 		<td width="70%">{{.Name}}</td>
@@ -27,38 +27,58 @@ const emailTemplateHtmlHeader = `
 		<td>Email:</td>
 		<td>{{.Email}}</td>
 	</tr>	
+</table>	
 {{end}}
 `
+
 const emailTemplateHtmlBody = `
-	<tr>
-		<td width="30%">BatchName:</td>
-		<td width="70%">{{.BatchName}}</td>
+<table border="0" cellpadding="3">
+	<tr bgcolor="#424242">
+		<td><font color="white">BatchName:</font></td>
+		<td><font color="white">{{.BatchName}}</font></td>
 	</tr>
 	{{range .URLResultList}}
-		<tr>
+		<tr bgcolor="#848484">
 			<td>Base de datos:</td>
 			<td>{{.GetUrlForMail}}</td>
 		</tr>
-		{{range .QueryResultList}}
+		{{range $i, $e :=.QueryResultList}}
+			<tr {{if $i | odd}} bgcolor="#424111" {{end}}>
+				<td>Query</td>
+				<td>
 			{{range .GetInnerResultStack }}  
+				
+				<table>
 				<tr>
-					<td>Query name:</td>
-					<td>{{.InnerLevel}} - {{.Name}}</td>
+					<td>{{.GetSpacing}}Name:{{.Name}} {{if .HasFailed}}<font color="red">{{end}}{{.Status}}{{if .HasFailed}}</font>{{end}}</td>
 				</tr>
+				{{if .HasError}}
 				<tr>
-					<td>Status:</td>
-					<td>{{.Status}} </td>
+					<td>{{.GetSpacing}}Expected:{{.QueryError.ExpectedValue}}, Received:<font color="red">{{.QueryError.ExecutionValue}}</font></td>
 				</tr>
-						<tr>
-							<td>Description:</td>
-							<td>{{.Description}}</td>
-						</tr>
-					<tr>
-						<td>Message:</td>
-						<td>{{.Message}}</td>
-					</tr>
+				{{end}}
+				{{if .HasDescription}}
+				<tr>
+					<td>{{.GetSpacing}}Description:{{.Description}}</td>
+				</tr>
+				{{end}}
+				{{if .HasMessage}}
+				<tr>
+					<td>{{.GetSpacing}}Message:{{.Message}}</td>
+				</tr>
+				{{end}}
+				</table>
 			{{end}}
+
+				</td>
+			</tr>
+
+
 		{{end}}
+		<tr>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
 	{{end}}
 </table>
 `

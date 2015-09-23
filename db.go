@@ -22,16 +22,6 @@ type DB struct {
 	URL string `xml:"url,attr"`
 }
 
-// SQL Sentences used by the executable queries
-const (
-	SELECT_COUNT_ALL      = "SELECT COUNT(*) FROM %v %v"
-	SELECT_COUNT_DISTINCT = "SELECT COUNT DISTINCT(%v) FROM %v %v"
-	SUM                   = "SELECT SUM(%v) FROM %v %v"
-	AVG                   = "SELECT AVG(%v) FROM %v %v"
-	MAX                   = "SELECT MAX(%v) FROM %v %v"
-	MIN                   = "SELECT MIN(%v) FROM %v %v"
-)
-
 // Executes the batch received as parameter against a given database
 // and send the populate the result to the channel
 func runUrlOnce(ch chan UrlResult, d *DB, batch *Batch) {

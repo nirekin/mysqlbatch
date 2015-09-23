@@ -20,10 +20,8 @@ import (
 // maximun, "from" database table, the complete "where" condition
 // ( including "where" !) and the expected result.
 type MaxQuery struct {
-	Field          Field          `xml:"from"`
-	From           From           `xml:"from"`
-	Where          Where          `xml:"where"`
-	ExceptedResult ExceptedResult `xml:"expected_result"`
+	Field Field `xml:"field"`
+	BaseQuery
 }
 
 // Returns the SQL correspinding to the query
@@ -34,7 +32,6 @@ func (o *MaxQuery) getSQL() string {
 // Return the expected result for the query
 func (o *MaxQuery) getExpectedResult() string {
 	return o.ExceptedResult.Content
-
 }
 
 // Shows the query content once loaded from the config file

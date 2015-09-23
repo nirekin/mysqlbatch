@@ -19,9 +19,7 @@ import (
 // To create the query you need to specify, the "from" database table, the
 // complete "where" condition ( including "where" !) and the expected result.
 type CountQuery struct {
-	From           From           `xml:"from"`
-	Where          Where          `xml:"where"`
-	ExceptedResult ExceptedResult `xml:"expected_result"`
+	BaseQuery
 }
 
 // Returns the SQL correspinding to the query

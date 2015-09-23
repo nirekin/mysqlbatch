@@ -13,6 +13,16 @@ import (
 	"fmt"
 )
 
+// SQL Sentences used by the executable queries
+const (
+	SELECT_COUNT_ALL      = "SELECT COUNT(*) FROM %v %v"
+	SELECT_COUNT_DISTINCT = "SELECT COUNT(DISTINCT %v) FROM %v %v"
+	SUM                   = "SELECT SUM(%v) FROM %v %v"
+	AVG                   = "SELECT AVG(%v) FROM %v %v"
+	MAX                   = "SELECT MAX(%v) FROM %v %v"
+	MIN                   = "SELECT MIN(%v) FROM %v %v"
+)
+
 // Database field used in executable queries
 type Field struct {
 	Content string `xml:",chardata"`
@@ -33,12 +43,20 @@ type ExceptedResult struct {
 	Content string `xml:",chardata"`
 }
 
+// To create a query you need to specify, the "from" database table, the
+// complete "where" condition ( including "where" !) and the expected result.
+type BaseQuery struct {
+	From           From           `xml:"from"`
+	Where          Where          `xml:"where"`
+	ExceptedResult ExceptedResult `xml:"expected_result"`
+}
+
 // Error returned by the executable queries.
 // This error is used if an executable query fails.
 type QueryError struct {
 	prob           string
-	expectedValue  string
-	executionvalue string
+	ExpectedValue  string
+	ExecutionValue string
 }
 
 type ExecutableQyery interface {
@@ -46,8 +64,17 @@ type ExecutableQyery interface {
 	getExpectedResult() string
 }
 
+// Shows the content of the error
+func (r *QueryError) showContent() {
+	TraceResult.Printf("query error %s:\n", r.prob)
+	TraceResult.Printf("query error expectedValue %s:\n", r.ExpectedValue)
+	TraceResult.Printf("query error executionValue %s:\n", r.ExecutionValue)
+}
+
 func processQuery(q ExecutableQyery, dbC *sql.DB) (error, *QueryError) {
-	if st, err := dbC.Prepare(q.getSQL()); err == nil {
+	s := q.getSQL()
+	TraceActivity.Println("execute query : %s", s)
+	if st, err := dbC.Prepare(s); err == nil {
 		if rows, err := st.Query(); err == nil {
 			var n string
 			for rows.Next() {
@@ -58,7 +85,11 @@ func processQuery(q ExecutableQyery, dbC *sql.DB) (error, *QueryError) {
 				return nil, nil
 			} else {
 				s := fmt.Sprintf("error expected %d got %d", e, n)
-				return nil, &QueryError{s, e, n}
+				r := &QueryError{}
+				r.prob = s
+				r.ExpectedValue = e
+				r.ExecutionValue = n
+				return nil, r
 			}
 		} else {
 			return err, nil
