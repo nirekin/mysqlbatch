@@ -4,7 +4,7 @@ MySqlBatch is a tool allowing you to execute predefined lists of simple queries 
 Each list of queries is wrapped into a batch. The execution of each batch can automatically generate a report and send it by mail to some recipients.
 
 MySqlBatch consume an XML file containing the specification of all the batches to run. 
-This files must be valid against this [DTD](https://raw.githubusercontent.com/nirekin/mysqlbatch/259a8a8c40fa0bed162abab77a4b7632dd47344e/mysqlbatch.dtd)
+This files must be valid against this [DTD](https://raw.githubusercontent.com/nirekin/mysqlbatch/master/mysqlbatch.dtd)
 
 By default MySqlBatch will look, on its own directory, for a file named "batch.xml" but you can specify another one using `mysqlbatch -file foo.xml`
 
