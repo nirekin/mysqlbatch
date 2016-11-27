@@ -10,6 +10,7 @@ MySqlBatch is a tool allowing you to :
 
 
 
+
 By default MySqlBatch will look, on its own directory, for a file named "batch.xml" but you can specify another one using `mysqlbatch -file foo.xml`
 
 In order to automatically send the generated emails you must run MySqlBatch with the `-email` option: `mysqlbatch -file foo.xml -email`

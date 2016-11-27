@@ -48,3 +48,4 @@ Temporary Items
 mysqlbatch.exe
 mysqlbatch
 testbatch.xml
+/test_batch/*
