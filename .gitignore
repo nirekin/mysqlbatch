@@ -49,3 +49,6 @@ mysqlbatch.exe
 mysqlbatch
 testbatch.xml
 /test_batch/*
+
+# Dep generated folder
+/vendor/
